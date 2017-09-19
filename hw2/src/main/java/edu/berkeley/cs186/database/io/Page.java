@@ -1,9 +1,9 @@
 package edu.berkeley.cs186.database.io;
 
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 
 /**
  * General-purpose wrapper for interacting with the memory-mapped bytes on a page.

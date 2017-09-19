@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -19,11 +18,9 @@ import org.junit.rules.TemporaryFolder;
 import org.junit.rules.TestRule;
 import org.junit.rules.Timeout;
 
-import edu.berkeley.cs186.database.common.Pair;
 import edu.berkeley.cs186.database.databox.DataBox;
 import edu.berkeley.cs186.database.databox.IntDataBox;
 import edu.berkeley.cs186.database.databox.Type;
-import edu.berkeley.cs186.database.io.Page;
 import edu.berkeley.cs186.database.io.PageAllocator;
 import edu.berkeley.cs186.database.table.RecordId;
 
@@ -37,7 +34,7 @@ public class TestLeafNode {
     @Rule
     public TestRule globalTimeout = new DisableOnDebug(Timeout.seconds(1));
 
-    private static DataBox d0 = new IntDataBox(0);
+	private static DataBox d0 = new IntDataBox(0);
     private static DataBox d1 = new IntDataBox(1);
     private static DataBox d2 = new IntDataBox(2);
     private static DataBox d3 = new IntDataBox(3);

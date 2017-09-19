@@ -10,7 +10,9 @@ import java.util.Map;
  *
  * YOU SHOULD NOT NEED TO CHANGE ANY OF THE CODE IN THIS PACKAGE.
  */
-public class LRUCache<k extends Long, v extends Page> extends LinkedHashMap<k, v> {
+public class LRUCache<v extends Page> extends LinkedHashMap<Long, v> {
+
+  private static final long serialVersionUID = 1L;
   private int cacheSize;
 
   public LRUCache(int cacheSize) {
@@ -18,7 +20,7 @@ public class LRUCache<k extends Long, v extends Page> extends LinkedHashMap<k, v
     this.cacheSize = cacheSize;
   }
 
-  protected boolean removeEldestEntry(Map.Entry<k, v> eldest) {
+  protected boolean removeEldestEntry(Map.Entry<Long, v> eldest) {
     if (size() > cacheSize) {
       eldest.getValue().flush();
       return true;

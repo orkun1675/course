@@ -1,19 +1,22 @@
 package edu.berkeley.cs186.database.io;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.junit.experimental.categories.Category;
-import java.nio.channels.FileChannel;
-import java.io.RandomAccessFile;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.io.File;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ArrayList;
 
 /**
 * Tests PageAllocator.java
@@ -37,7 +40,8 @@ public class TestPageAllocator {
     File tempFile = tempFolder.newFile(fName);
     PageAllocator pA = new PageAllocator(tempFile.getAbsolutePath(), true, false);
     pA.close();
-    FileChannel fc = new RandomAccessFile(tempFile, "r").getChannel();
+    RandomAccessFile raf = new RandomAccessFile(tempFile, "r");
+    FileChannel fc = raf.getChannel();
 
     assertEquals(Page.pageSize, fc.size());
 
@@ -47,6 +51,9 @@ public class TestPageAllocator {
     for (int i = 0; i < Page.pageSize; i++) {
       assertEquals((byte) 0, masterPage[i]);
     }
+    
+    fc.close();
+    raf.close();
   }
 
   @Test
@@ -54,7 +61,8 @@ public class TestPageAllocator {
     File tempFile = tempFolder.newFile(fName);
     PageAllocator pA = new PageAllocator(tempFile.getAbsolutePath(), true, false);
     pA.close();
-    FileChannel fc = new RandomAccessFile(tempFile, "r").getChannel();
+    RandomAccessFile raf = new RandomAccessFile(tempFile, "r");
+    FileChannel fc = raf.getChannel();
 
     assertEquals(Page.pageSize, fc.size());
 
@@ -64,12 +72,14 @@ public class TestPageAllocator {
     for (int i = 0; i < Page.pageSize; i++) {
       assertEquals((byte) 0, masterPage[i]);
     }
+    
     fc.close();
+    raf.close();
 
     pA = new PageAllocator(tempFile.getAbsolutePath(), false, false);
     pA.close();
-    fc = new RandomAccessFile(tempFile, "r").getChannel();
-
+    raf = new RandomAccessFile(tempFile, "r");
+    fc = raf.getChannel();
 
     bb = ByteBuffer.allocate(Page.pageSize);
     fc.read(bb, 0);
@@ -77,7 +87,9 @@ public class TestPageAllocator {
     for (int i = 0; i < Page.pageSize; i++) {
       assertEquals((byte) 0, masterPage[i]);
     }
+    
     fc.close();
+    raf.close();
   }
 
   @Test
@@ -87,9 +99,11 @@ public class TestPageAllocator {
 
     assertEquals(0, pA.allocPage());
     pA.close();
-    FileChannel fc = new RandomAccessFile(tempFile, "r").getChannel();
+    RandomAccessFile raf = new RandomAccessFile(tempFile, "r");
+    FileChannel fc = raf.getChannel();
     assertEquals(byteEstimate(1), fc.size());
     fc.close();
+    raf.close();
   }
 
   @Test
@@ -102,9 +116,11 @@ public class TestPageAllocator {
     }
 
     pA.close();
-    FileChannel fc = new RandomAccessFile(tempFile, "r").getChannel();
+    RandomAccessFile raf = new RandomAccessFile(tempFile, "r");
+    FileChannel fc = raf.getChannel();
     assertEquals(byteEstimate(9000), fc.size());
     fc.close();
+    raf.close();
   }
 
   @Test
@@ -123,12 +139,14 @@ public class TestPageAllocator {
       }
     }
     pA.close();
-    FileChannel fc = new RandomAccessFile(tempFile, "r").getChannel();
+    
+    RandomAccessFile raf = new RandomAccessFile(tempFile, "r");
+    FileChannel fc = raf.getChannel();
     assertEquals(byteEstimate(4097), fc.size());
     fc.close();
+    raf.close();
 
     pA = new PageAllocator(tempFile.getAbsolutePath(), false, false);
-
     for (int i = 0; i < 4097; i++) {
       Page p = pA.fetchPage(i);
       assertEquals(i, p.getPageNum());
@@ -139,6 +157,7 @@ public class TestPageAllocator {
         assertEquals(i*1024 + j, count);
       }
     }
+    pA.close();
   }
 
   @Test
@@ -157,9 +176,11 @@ public class TestPageAllocator {
       }
     }
     pA.close();
-    FileChannel fc = new RandomAccessFile(tempFile, "r").getChannel();
+    RandomAccessFile raf = new RandomAccessFile(tempFile, "r");
+    FileChannel fc = raf.getChannel();
     assertEquals(byteEstimate(10), fc.size());
     fc.close();
+    raf.close();
 
     pA = new PageAllocator(tempFile.getAbsolutePath(), false, false);
 

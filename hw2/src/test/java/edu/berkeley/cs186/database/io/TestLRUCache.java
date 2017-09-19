@@ -1,14 +1,17 @@
 package edu.berkeley.cs186.database.io;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.junit.experimental.categories.Category;
-import java.nio.channels.FileChannel;
-import java.io.RandomAccessFile;
-import java.io.IOException;
-import java.io.File;
 
 /**
 * Tests LRU Cache; should be optional test for students
@@ -23,11 +26,12 @@ public class TestLRUCache {
   public TemporaryFolder tempFolder = new TemporaryFolder();
 
   @Test
-  public void TestLRUCache() throws IOException {
+  public void testLRUCache() throws IOException {
     File tempFile = tempFolder.newFile(fName);
-    FileChannel fc = new RandomAccessFile(tempFile, "rw").getChannel();
+    RandomAccessFile raf = new RandomAccessFile(tempFile, "rw");
+    FileChannel fc = raf.getChannel();
     Page p = new Page(fc, 0, 0);
-    LRUCache<Long, Page> l = new LRUCache(10);
+    LRUCache<Page> l = new LRUCache<Page>(10);
     for (long i = 0; i < 10; i++) {
       l.put(i,p);
       assertEquals(i + 1, l.size());
@@ -38,5 +42,7 @@ public class TestLRUCache {
       assertTrue(l.containsKey(i));
       assertFalse(l.containsKey(i-10));
     }
+    fc.close();
+    raf.close();
   }
 }

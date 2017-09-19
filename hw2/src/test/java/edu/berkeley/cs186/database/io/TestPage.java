@@ -1,15 +1,17 @@
 package edu.berkeley.cs186.database.io;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.junit.experimental.categories.Category;
-import java.nio.channels.FileChannel;
-import java.io.RandomAccessFile;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.File;
 
 /**
 * Tests Page.java
@@ -27,16 +29,19 @@ public class TestPage {
   @Test
   public void TestPageConstructor() throws IOException, FileNotFoundException {
     File tempFile = tempFolder.newFile(fName);
-    FileChannel fc = new RandomAccessFile(tempFile, "rw").getChannel();
+    RandomAccessFile raf = new RandomAccessFile(tempFile, "rw");
+    FileChannel fc = raf.getChannel();
     Page p = new Page(fc, 0, 0);
     assertEquals(0, p.getPageNum());
     fc.close();
+    raf.close();
   }
 
   @Test
   public void TestPageZeroOnNew() throws IOException, FileNotFoundException {
     File tempFile = tempFolder.newFile(fName);
-    FileChannel fc = new RandomAccessFile(tempFile, "rw").getChannel();
+    RandomAccessFile raf = new RandomAccessFile(tempFile, "rw");
+    FileChannel fc = raf.getChannel();
     Page p = new Page(fc, 0, 0);
     assertEquals(0, p.getPageNum());
     byte[] b = p.readBytes();
@@ -45,12 +50,14 @@ public class TestPage {
       assertEquals(0, b[i]);
     }
     fc.close();
+    raf.close();
   }
 
   @Test
   public void TestPageWriteReadByte() throws IOException, FileNotFoundException {
     File tempFile = tempFolder.newFile(fName);
-    FileChannel fc = new RandomAccessFile(tempFile, "rw").getChannel();
+    RandomAccessFile raf = new RandomAccessFile(tempFile, "rw");
+    FileChannel fc = raf.getChannel();
     Page p = new Page(fc, 0, 0);
     assertEquals(0, p.getPageNum());
     byte[] b = p.readBytes();
@@ -65,12 +72,14 @@ public class TestPage {
       assertEquals(b[i], b2[i]);
     }
     fc.close();
+    raf.close();
   }
 
   @Test
   public void TestPageWriteReadByteDurable() throws IOException, FileNotFoundException {
     File tempFile = tempFolder.newFile(fName);
-    FileChannel fc = new RandomAccessFile(tempFile, "rw").getChannel();
+    RandomAccessFile raf = new RandomAccessFile(tempFile, "rw");
+    FileChannel fc = raf.getChannel();
     Page p = new Page(fc, 0, 0);
     assertEquals(0, p.getPageNum());
     byte[] b = p.readBytes();
@@ -87,12 +96,14 @@ public class TestPage {
       assertEquals(b[i], b2[i]);
     }
     fc.close();
+    raf.close();
   }
 
   @Test
   public void TestPageWriteWipe() throws IOException, FileNotFoundException {
     File tempFile = tempFolder.newFile(fName);
-    FileChannel fc = new RandomAccessFile(tempFile, "rw").getChannel();
+    RandomAccessFile raf = new RandomAccessFile(tempFile, "rw");
+    FileChannel fc = raf.getChannel();
     Page p = new Page(fc, 0, 0);
     assertEquals(0, p.getPageNum());
     byte[] b = p.readBytes();
@@ -114,18 +125,20 @@ public class TestPage {
     }
 
     fc.close();
+    raf.close();
   }
 
   @Test
   public void TestPageOutOfBounds() throws IOException, FileNotFoundException {
     File tempFile = tempFolder.newFile(fName);
-    FileChannel fc = new RandomAccessFile(tempFile, "rw").getChannel();
+    RandomAccessFile raf = new RandomAccessFile(tempFile, "rw");
+    FileChannel fc = raf.getChannel();
     Page p = new Page(fc, 0, 0);
     assertEquals(0, p.getPageNum());
 
     boolean thrown = false;
     try {
-      byte b = p.readByte(-1);
+      p.readByte(-1);
     } catch (PageException e) {
       thrown = true;
     }
@@ -133,13 +146,14 @@ public class TestPage {
 
     thrown = false;
     try {
-      byte b = p.readByte(Page.pageSize);
+      p.readByte(Page.pageSize);
     } catch (PageException e) {
       thrown = true;
     }
     assertTrue(thrown);
 
     fc.close();
+    raf.close();
   }
 
 }

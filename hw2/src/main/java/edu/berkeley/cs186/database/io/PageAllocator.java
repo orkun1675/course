@@ -1,23 +1,18 @@
 package edu.berkeley.cs186.database.io;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.channels.FileChannel;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-import java.nio.ByteOrder;
-import java.util.LinkedHashMap;
-import java.lang.IllegalArgumentException;
-import java.util.Arrays;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.NoSuchElementException;
+import java.nio.channels.FileChannel;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ArrayList;
+import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.io.Closeable;
+import java.util.concurrent.atomic.AtomicLong;
 /**
  * A PageAllocation system for an OS paging system. Provides memory-mapped paging from the OS, an
  * interface to individual pages with the Page objects, an LRU cache for pages, 16GB worth of paging,
@@ -30,7 +25,7 @@ public class PageAllocator implements Iterable<Page>, Closeable {
   private static final int cacheSize = 1024;
 
   private static AtomicInteger pACounter = new AtomicInteger(0);
-  private static LRUCache<Long, Page> pageLRU = new LRUCache<Long, Page>(cacheSize);
+  private static LRUCache<Page> pageLRU = new LRUCache<Page>(cacheSize);
   private static AtomicLong numIOs = new AtomicLong(0);
   private static AtomicLong cacheMisses = new AtomicLong(0);
 
@@ -50,6 +45,7 @@ public class PageAllocator implements Iterable<Page>, Closeable {
     this(fName, wipe, true);
   }
 
+  @SuppressWarnings("resource")
   public PageAllocator(String fName, boolean wipe, boolean durable) {
     this.durable = durable;
     try {

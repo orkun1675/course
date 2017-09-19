@@ -1,8 +1,6 @@
 package edu.berkeley.cs186.database.index;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import edu.berkeley.cs186.database.common.Pair;
